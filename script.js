@@ -100,15 +100,13 @@ const observer = new IntersectionObserver(callback, option);
 observer.observe(header); //header가 viewport에서 10 거의 없어질 때 딱 nav height정도가 됐을 때 nav가 sticky position을 얻도록 함.
 
 //opacity clearing
-sections.forEach(v => v.classList.add('section--hidden'));
 
 const clearOpacity = function (e, o) {
-  e.forEach(e => {
-    e.isIntersecting ? section1.classList.remove('section--hidden') : '';
-    e.isIntersecting
-      ? features__img.forEach(v => v.classList.remove('lazy-img'))
-      : '';
-  });
+  const [entry] = e;
+  console.log(entry);
+  console.log(o);
+
+  entry.isIntersecting ? entry.target.classList.remove('section--hidden') : '';
 };
 
 const observerForOpacity = new IntersectionObserver(clearOpacity, {
@@ -116,37 +114,10 @@ const observerForOpacity = new IntersectionObserver(clearOpacity, {
   threshold: 0.4,
 });
 
-observerForOpacity.observe(section1);
-
-///////////////////2///////////////////
-
-const clearOpacity2 = function (e, o) {
-  e.forEach(e => {
-    e.isIntersecting ? section2.classList.remove('section--hidden') : '';
-  });
-};
-
-const observerForOpacity2 = new IntersectionObserver(clearOpacity2, {
-  root: null,
-  threshold: 0.4,
+sections.forEach(section => {
+  observerForOpacity.observe(section);
+  section.classList.add('section--hidden');
 });
-
-observerForOpacity2.observe(section2);
-
-///////////////////3//////////////////
-
-const clearOpacity3 = function (e, o) {
-  e.forEach(e => {
-    e.isIntersecting ? section3.classList.remove('section--hidden') : '';
-  });
-};
-
-const observerForOpacity3 = new IntersectionObserver(clearOpacity3, {
-  root: null,
-  threshold: 0.4,
-});
-
-observerForOpacity3.observe(section3);
 
 //I don't know how it can be seperated
 
