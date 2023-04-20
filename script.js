@@ -12,10 +12,10 @@ const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const nav__links = document.querySelector('.nav__links');
 const nav__link = document.querySelectorAll('.nav__link');
 const sections = document.querySelectorAll('.section');
-const section1 = document.querySelector('#section--1');
-const section2 = document.querySelector('#section--2');
-const section3 = document.querySelector('#section--3');
 const features__img = document.querySelectorAll('.features__img');
+const operationContainer = document.querySelector('.operations__tab-container');
+const operationButtons = document.querySelectorAll('.operations__tab');
+const operationContent = document.querySelectorAll('.operations__content');
 
 const openModal = function () {
   modal.classList.remove('hidden');
@@ -54,6 +54,8 @@ nav__links.addEventListener('click', function (e) {
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
+
+//부모 tag를 선택해도 capture 때문에 아래로 내려가게 됨, 그렇기 때문에 nav__link도 클릭이 가능함
 
 //샘은 target을 이용해서 해결, 그리고 Matching strategy라는 것을 이용,
 // document.querySelector('.nav__links').addEventListener('click', function (e) {
@@ -107,6 +109,9 @@ const clearOpacity = function (e, o) {
   console.log(o);
 
   entry.isIntersecting ? entry.target.classList.remove('section--hidden') : '';
+  entry.isIntersecting
+    ? features__img.forEach(img => img.classList.remove('lazy-img'))
+    : '';
 };
 
 const observerForOpacity = new IntersectionObserver(clearOpacity, {
@@ -117,6 +122,37 @@ const observerForOpacity = new IntersectionObserver(clearOpacity, {
 sections.forEach(section => {
   observerForOpacity.observe(section);
   section.classList.add('section--hidden');
+});
+
+// section 2 => click 했을 때 해당 클릭한 부분만 활성화 되고 나머지는 활성화 되지 않게 하기
+
+const targetData = operationButtons.forEach(v => {
+  return v.getAttribute('data-tab');
+});
+
+operationContainer.addEventListener('click', e => {
+  const clicked = e.target.closest('.operations__tab');
+  //이렇게 하면 contains method로 안하고 클릭한 녀석을 모두 알 수 있다.
+
+  // Guard clause
+  if (!clicked) return; //이렇게 함으로써 이 클릭된 녀석이 아닌 다른 녀석이 클릭하면 무시할 수 있다.
+
+  operationButtons.forEach(btn =>
+    btn.classList.remove('operations__tab--active')
+  );
+  operationContent.forEach(con =>
+    con.classList.remove('operations__content--active')
+  );
+
+  clicked.classList.add('operations__tab--active');
+
+  const active = clicked.getAttribute('data-tab');
+
+  operationContent.forEach(v => {
+    v.classList.contains(`operations__content--${active}`)
+      ? v.classList.add('operations__content--active')
+      : '';
+  });
 });
 
 //I don't know how it can be seperated
