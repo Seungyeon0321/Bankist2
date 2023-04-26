@@ -105,13 +105,10 @@ observer.observe(header); //header가 viewport에서 10 거의 없어질 때 딱
 
 const clearOpacity = function (e, o) {
   const [entry] = e;
-  console.log(entry);
-  console.log(o);
 
   entry.isIntersecting ? entry.target.classList.remove('section--hidden') : '';
-  entry.isIntersecting
-    ? features__img.forEach(img => img.classList.remove('lazy-img'))
-    : '';
+
+  observer.unobserve(entry.target);
 };
 
 const observerForOpacity = new IntersectionObserver(clearOpacity, {
@@ -122,6 +119,34 @@ const observerForOpacity = new IntersectionObserver(clearOpacity, {
 sections.forEach(section => {
   observerForOpacity.observe(section);
   section.classList.add('section--hidden');
+});
+
+// load image
+
+const lazyImgs = document.querySelectorAll('.features img');
+
+const clearImg = function (e, o) {
+  const [entry] = e;
+
+  entry.isIntersecting ? (entry.target.src = entry.target.dataset.src) : '';
+
+  entry.target.addEventListener('load', () => {
+    entry.isIntersecting
+      ? lazyImgs.forEach(img => img.classList.remove('lazy-img'))
+      : '';
+  });
+
+  observer.unobserve(entry.target);
+};
+
+const observerForImage = new IntersectionObserver(clearImg, {
+  root: null,
+  threshold: 0,
+  margin: '200px',
+});
+
+lazyImgs.forEach(img => {
+  observerForImage.observe(img);
 });
 
 // section 2 => click 했을 때 해당 클릭한 부분만 활성화 되고 나머지는 활성화 되지 않게 하기
@@ -154,6 +179,8 @@ operationContainer.addEventListener('click', e => {
       : '';
   });
 });
+
+//slide
 
 //I don't know how it can be seperated
 
