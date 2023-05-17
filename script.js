@@ -181,6 +181,83 @@ operationContainer.addEventListener('click', e => {
 });
 
 //slide
+const dots = document.querySelector('.dots');
+const slides = document.querySelectorAll('.slide');
+const slideRightBtn = document.querySelector('.slider__btn--right');
+const slideLeftBtn = document.querySelector('.slider__btn--left');
+
+let curSlide = 0;
+const maxSlide = slides.length;
+
+const slideHandler = function () {
+  slides.forEach(
+    (slide, i) => (slide.style.transform = `translateX(${100 * i}%)`)
+  );
+};
+
+slideHandler();
+
+const gotoSlide = curSlide => {
+  slides.forEach(
+    (slide, i) =>
+      (slide.style.transform = `translateX(${100 * (i - curSlide)}%)`)
+  );
+};
+
+const NextSlide = () => {
+  if (curSlide === maxSlide - 1) {
+    curSlide = 0;
+  } else {
+    curSlide++;
+    console.log(curSlide);
+  }
+  gotoSlide(curSlide);
+};
+
+const PrevSlide = () => {
+  if (curSlide === 0) {
+    curSlide = maxSlide - 1;
+  } else {
+    curSlide--;
+  }
+  gotoSlide(curSlide);
+};
+
+slideRightBtn.addEventListener('click', NextSlide);
+slideLeftBtn.addEventListener('click', PrevSlide);
+
+const createDots = function () {
+  slides.forEach((_, i) =>
+    dots.insertAdjacentHTML(
+      'beforeend',
+      `<button class="dots__dot" data-slide="${i}"></button>`
+    )
+  );
+};
+
+createDots();
+
+//처음 dot 나오게 하는 방법
+const eachDots = dots.querySelectorAll('.dots__dot');
+const firstDot = eachDots[0];
+firstDot.classList.add('dots__dot--active');
+
+//클릭했을 때 handler
+dots.addEventListener('click', e => {
+  if (e.target.classList.contains('dots__dot')) {
+    const slide = e.target.dataset.slide;
+    gotoSlide(slide);
+  }
+
+  const clickedDots = e.target.closest('.dots__dot');
+
+  if (!clickedDots) return;
+
+  const activeDots = dots.querySelector('.dots__dot--active');
+  activeDots ? activeDots.classList.remove('dots__dot--active') : '';
+
+  clickedDots.classList.add('dots__dot--active');
+});
 
 //I don't know how it can be seperated
 
